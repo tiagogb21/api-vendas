@@ -1,0 +1,95 @@
+package.json
+
+ts-node-dev (permite passar alguns parâmetros)
+--inspect (inspecionar)
+--transpile-only (SOMENTE transpilação)
+--ignore-watch node_modules (ignora a pasta node_modules)
+src/service.ts
+
+Fizemos a configuração do .editorconfig:
+  - clique direito sobre o explorer e indo na última opção:
+    Generate .editorconfig
+
+Para configurar o eslint:
+
+yarn add -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
+
+configuramos o arquivo .eslintrc
+
+criamos o .eslintignore
+
+Podemos adicionar regras no eslint, essas se baseiam em três valores:
+  - "off"
+  - "warn"
+  - "error"
+
+Parâmetros prettier:
+  - semi: true (o Prettier irá adicionar ";" quando necessário)
+  - trailingComma: all (o Prettier colocará vírgula no final dos objetos)
+  - singleQuotte: true (o Prettier usará aspas simples ao invés de aspas duplas)
+  - printWidth: 80 (todas as linhas que excederem 80 caracteres serão quebradas)
+
+Estrutura de Pastas:
+  1 - config: configurações de bibliotecas externas (ex.: autenticação, upload, email, ...)
+  2 - modules: abrange as áreas de conhecimento da aplicação, diretamente relacionados com as regras de negócio da aplicação.
+  3 - shared: módulos de uso geral, compartilhados com mais de um módulo da aplicação (ex.: server.ts, arquivo principal de rotas, conexão com banco de dados, ...)
+  4 - services: estarão dentro de cada módulo da aplicação e serão responsáveis por todas as regras que a aplicação precisa atender, ex.:
+    I - A senha deve ser armazenada com criptografia;
+    II - Não pode haver mais de um produto com o mesmo nome;
+    III - Não pode haver um mesmo email sendo usado por mais de um usuário;
+
+Precisamos instalar o express e o cors:
+
+  yarn add express cors express-async-errors
+
+  yarn add -D @types/express @types/cors
+
+Criamos uma pasta routes dentro de http e dentro dela um arquivo index.ts, principal, que será responsável por fazer a chamada para todos os outros
+
+Instalar o typeorm e o postgree:
+yarn add typeorm reflect-metadata pg
+
+Criar um arquivo ormconfir.json para informar que estaremos nos conectando com nosso banco de dados:
+  Vamos definir quais parâmetros serão usados para conexão
+
+Vamos criar um container:
+
+  docker run --name postgres -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres
+
+    obs: -e --> parâmetro que informa uma variável de ambiente pro container
+
+    obs: -d --> rodas em segundo plano (background), para que o terminal NÂO fique preso
+
+    obs: A porta passada (5432:5432 - máquina:docker) DEVE ser a mesma que a do arquivo ormconfig. (Podemos mudar a porta da máquina, mas NUNCA a porta do docker)
+
+Precisamos rodar o nosso banco de dados (ormconfig --> "database": "apivendas"), recomendado usar o dbeaver.io
+
+Para rodar o servidor: yarn dev
+
+Para que possamos fazer a primeira migração, no caso para criar a tabela de produtos:
+
+  yarn typeorm migration:create -n CreateProducts
+
+  migration:create --> para criar uma migração
+
+  -n --> para informar o nome do arquivo que queremos criar
+
+
+
+
+import {MigrationInterface, QueryRunner, Table} from "typeorm";
+
+export class CreateProducts1649338906496 implements MigrationInterface {
+    // Método up: cria a migração em si
+    public async up(queryRunner: QueryRunner): Promise<void> {
+      // Método assincrono porque são operações que serão executadas no banco de dados
+      // Vamos criar uma tabela
+      // Dentro de table passamos um objeto que será responsável por trazer todas as configurações de
+      await queryRunner.createTable(new Table({}));
+    }
+
+    // Método down: desfaz a migração
+    public async down(queryRunner: QueryRunner): Promise<void> {
+    }
+
+}
