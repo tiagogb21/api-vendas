@@ -1,3 +1,6 @@
+"@diretorio/*": [src/diretorio]
+  obs.: o @ indica que se trata de um atalho
+
 package.json
 
 ts-node-dev (permite passar alguns parâmetros)
