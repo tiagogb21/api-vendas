@@ -34,6 +34,8 @@ app.use(
       });
     }
 
+    console.log(error);
+
     // Quando o erro for desconhecido, não se aplicando no caso da AppError
     // obs.: todo erro gerado pelo servidor cairá aqui
     return response.status(500).json({
